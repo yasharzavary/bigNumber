@@ -7,4 +7,4 @@ print(BN(-989662) - BN(123456))
 
 print(abs(BN('-549563289')))
 
-print(BN(-123) < BN(-456))
+print(BN(1423) == BN(1423))

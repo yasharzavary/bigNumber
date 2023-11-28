@@ -216,6 +216,7 @@ class BN:
         pass
     def __lshift__(self, other):
         pass
+    
     def __lt__(self, other):
         # control sign of the numbers
         if self.Nsign==False and other.Nsign==True:
@@ -246,18 +247,140 @@ class BN:
                 if self[i]>other[i]:
                     return True
             return False
-    
-        
     def __gt__(self, other):
-        pass
+        # control sign of the numbers
+        if self.Nsign==False and other.Nsign==True:
+            return False 
+        elif self.Nsign==True and other.Nsign==False:
+            return True
+        
+        # now sign is important for next step
+        if self.Nsign == True:
+            # control len of the numbers
+            if len(self) > len(other):
+                return True
+            elif len(other) > len(self):
+                return False
+            # two number with same len and sign...ok control one by one
+            for i in range(len(self)):
+                if self[i]>other[i]:
+                    return True
+            return False
+        else:
+            # control len of the numbers
+            if len(self) > len(other):
+                return False
+            elif len(other) > len(self):
+                return True
+            
+            for i in range(len(self)):
+                if self[i]<other[i]:
+                    return True
+            return False
     def __le__(self, other):
-        pass
+        # control sign of the numbers
+        if self.Nsign==False and other.Nsign==True:
+            return True 
+        elif self.Nsign==True and other.Nsign==False:
+            return False
+        
+        # now sign is important for next step
+        if self.Nsign == True:
+            # control len of the numbers
+            if len(self) > len(other):
+                return False
+            elif len(other) > len(self):
+                return True
+            # two number with same len and sign...ok control one by one
+            # for equal, i set one flag!
+            same = True
+            for i in range(len(self)):
+                if self[i]<other[i]:
+                    return True
+                if self[i]!=other[i]:
+                    same=False
+            if same:
+                return True
+            return False
+        else:
+            # control len of the numbers
+            if len(self) > len(other):
+                return True
+            elif len(other) > len(self):
+                return False
+            
+            same = True
+            for i in range(len(self)):
+                if self[i]>other[i]:
+                    return True
+                if self[i]!=other[i]:
+                    same = False
+            if same:
+                return True
+            return False
     def __ge__(self, other):
-        pass
+        # control sign of the numbers
+        if self.Nsign==False and other.Nsign==True:
+            return False 
+        elif self.Nsign==True and other.Nsign==False:
+            return True
+        
+        # now sign is important for next step
+        if self.Nsign == True:
+            # control len of the numbers
+            if len(self) > len(other):
+                return True
+            elif len(other) > len(self):
+                return False
+            # two number with same len and sign...ok control one by one
+            # for control equal i use one flag
+            same = True
+            for i in range(len(self)):
+                if self[i]>other[i]:
+                    return True
+                if self[i]!=other[i]:
+                    same = False
+            if same:
+                return True
+            return False
+        else:
+            # control len of the numbers
+            if len(self) > len(other):
+                return False
+            elif len(other) > len(self):
+                return True
+            
+            same = True
+            for i in range(len(self)):
+                if self[i]<other[i]:
+                    return True
+                if self[i]!=other[i]:
+                    same = False
+            if same:
+                return True
+            return False  
     def __eq__(self, other):
-        pass
+        # if len or sign is different, it  will return false
+        if self.Nsign != other.Nsign or len(self)!=len(other):
+            return False
+
+        # if len and sign is same, time for cheking number by number
+        for i in range(len(self)):
+            if self[i]!=other[i]:
+                return False
+        return True
     def __ne__(self, other):
-        pass
+        # if len or sign is different, it  will return false
+        if self.Nsign != other.Nsign or len(self)!=len(other):
+            return True
+
+        # if len and sign is same, time for cheking number by number
+        for i in range(len(self)):
+            if self[i]!=other[i]:
+                return True
+        return False
+    
+    
     def __isub__(self, other):
         pass
     def __iadd__(self, other):
