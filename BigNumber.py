@@ -84,15 +84,33 @@ class BN:
             num (optional): number that we want to add to the number list
             were (int): place that we want to add it to the list
         """
-        self.__bigNumber.insert(were, num)
-    
+        self.__bigNumber.insert(were, num)  
     def itemGetter(self, index):
-        return int(self.__bigNumber[index])    
-    
+        """_summary_
+            it will return number of one postion that we get it to the function
+        Args:
+            index (int): position of the number that user want
+
+        Returns:
+            int: send back num of that position
+        """
+        return int(self.__bigNumber[index])       
     @property
     def Nsign(self):
-        return self.__sign
-    
+        """_summary_
+            one getter for get sign of the number
+        Returns:
+            bool: one bool depend on the sign
+        """
+        return self.__sign  
+    @property
+    def Ndigits(self):
+        """_summary_
+            one getter for return the list of the numbers
+        Returns:
+            list: return list of the numbers
+        """
+        return self.__bigNumber
     def __add__(self, other):
         """_summary_
             this will sum two big number
@@ -164,9 +182,9 @@ class BN:
             return BN(result, self.Nsign)
             
         elif self.Nsign == True:
-            return self - BN(other.__bigNumber)
+            return self - BN(other.Ndigits)
         else:
-            return other - BN(self.__bigNumber)        
+            return other - BN(self.Ndigits)        
         
             
              
