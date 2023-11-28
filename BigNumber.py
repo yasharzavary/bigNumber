@@ -32,13 +32,6 @@ class BNError(Exception):
 
 class BN:
     def __init__(self, num=0, s = None):
-        """_summary_
-            make one big number depend of the num's type...
-        Args:
-            num (, optional): value of the big number
-            s(bool,optional): sign of the number
-        """
-        # default it is True, in init we check it
         self.__sign = s
         # our list of digits
         self.__bigNumber = []
@@ -69,13 +62,8 @@ class BN:
             temp = [str(number) for number in num]
             if not search(r'^[+-]?\d+$', ''.join(temp)):
                 raise BNError('you can\'t use any characters in your number, just number please')
-            self.bigNumber = temp
+            self.__bigNumber = temp
     def __len__(self):
-        """_summary_
-            return number of number's digits
-        Returns:
-            int: ...
-        """
         return len(self.__bigNumber)
     def insertNum(self, num, were):
         """_summary_
@@ -85,16 +73,11 @@ class BN:
             were (int): place that we want to add it to the list
         """
         self.__bigNumber.insert(were, num)  
-    def itemGetter(self, index):
-        """_summary_
-            it will return number of one postion that we get it to the function
-        Args:
-            index (int): position of the number that user want
-
-        Returns:
-            int: send back num of that position
-        """
-        return int(self.__bigNumber[index])       
+    def __getitem__(self, index):
+        return int(self.__bigNumber[index])  
+    def __setitem__(self, index, val):
+        self.__bigNumber[index] = val  
+           
     @property
     def Nsign(self):
         """_summary_
@@ -112,14 +95,9 @@ class BN:
         """
         return self.__bigNumber
     def __add__(self, other):
-        """_summary_
-            this will sum two big number
-            
-        Args:
-            other (BN): number that we want to add to this number
-        """
+        
         # if two number have one similar sign, it will simply add them togheter and return
-        if self.Nsign == other.Nsign:
+        if self.__sign == other.Nsign:
             # one empty list for the new number
             result = []
             # our carry for the next step
@@ -134,7 +112,7 @@ class BN:
             if lself == lother:
                 # i loop and sum one by one and add them to the result list
                 for i in range(-1, lself*-1 - 1, -1):
-                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    temp = self[i] + other[i] + carry
                     # carry update
                     carry = temp // 10
                     # adding to the result
@@ -148,7 +126,7 @@ class BN:
                 # add two number's similar len part
                 for i in range(-1, lother*-1 - 1, -1):
                     # make one temp and add two index
-                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    temp = self[i] + other[i] + carry
                     # update carry
                     carry = temp // 10
                     result.insert(0, temp%10)
@@ -156,8 +134,8 @@ class BN:
                 for i in range(lother*-1 - 1, lself*-1 - 1,-1):
                     # if carry is zero, we just add numbers of the self to result
                     if carry == 0:
-                        result.insert(0, self.itemGetter(i))
-                    temp = self.itemGetter(i) + carry
+                        result.insert(0, self[i])
+                    temp = self[i] + carry
                     carry = temp // 10
                     result.insert(0, temp%10)
                 # if we have one carry in last part, we must add it to the result
@@ -166,36 +144,64 @@ class BN:
             else:
                 # similar to the second condition, just we do it or other big number
                 for i in range(-1, lself*-1 - 1, -1):
-                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    temp = self[i] + other[i] + carry
                     carry = temp // 10
                     result.insert(0, temp % 10)
                 for i in range(lself*-1 - 1, lother*-1 - 1, -1 ):
                     if carry == 0:
-                        result.insert(0, other.itemGetter(i))
-                    temp = other.itemGetter(i) + carry
+                        result.insert(0, other[i])
+                    temp = other[i] + carry
                     carry = temp // 10 
                     result.insert(0, temp % 10)
                 if carry > 0:
                     result.insert(0, carry)
                 
             # return new BN that is sum result
-            return BN(result, self.Nsign)
+            return BN(result, self.__sign)
             
-        elif self.Nsign == True:
+        elif self.__sign == True:
             return self - BN(other.Ndigits)
         else:
             return other - BN(self.Ndigits)        
-        
-            
-             
-        
-    def __sub__(self, other):
+    def __abs__(self):
         """_summary_
-            this will subtract two big number
-        Args:
-            other (BN): big number that we want to use int he sub function
+            this will abs our big number and return it for other usage
+        Returns:
+            BN: abs of the big number
         """
-        pass
+        self.__sign = True
+        return self
+                   
+    def __sub__(self, other):
+        if self.__sign != other.Nsign:
+            return self + BN(other.Ndigits, self.__sign)
+        
+        # get len of both self and other
+        lself = len(self)
+        lother = len(other)
+        
+        result = []
+        
+        if lself > lother:
+            BNTemp = self
+            for i in range(-1, lother*-1 - 1, -1):
+                a = BNTemp[i]
+                b = other[i]
+                if a >= b:
+                    result.insert(0, a-b)
+                else:
+                    result.insert(0, a-b+10)
+                    BNTemp[i-1] = BNTemp[i-1] - 1
+            for i in range(lother*-1 - 1, lself*-1 - 1, -1):
+                if BNTemp[i] < 0:
+                    result.insert(0, BNTemp[i] + 10)
+                else:
+                    result.insert(0, BNTemp[i])           
+        else:
+            pass
+        
+        
+        
     def __mul__(self, other):
         pass
     def __truediv__(self, other):
@@ -211,7 +217,37 @@ class BN:
     def __lshift__(self, other):
         pass
     def __lt__(self, other):
-        pass
+        # control sign of the numbers
+        if self.Nsign==False and other.Nsign==True:
+            return True 
+        elif self.Nsign==True and other.Nsign==False:
+            return False
+        
+        # now sign is important for next step
+        if self.Nsign == True:
+            # control len of the numbers
+            if len(self) > len(other):
+                return False
+            elif len(other) > len(self):
+                return True
+            # two number with same len and sign...ok control one by one
+            for i in range(len(self)):
+                if self[i]<other[i]:
+                    return True
+            return False
+        else:
+            # control len of the numbers
+            if len(self) > len(other):
+                return True
+            elif len(other) > len(self):
+                return False
+            
+            for i in range(len(self)):
+                if self[i]>other[i]:
+                    return True
+            return False
+    
+        
     def __gt__(self, other):
         pass
     def __le__(self, other):
@@ -241,7 +277,7 @@ class BN:
         """_summary_
             str magic function of the class
         """
-        return ''.join(self.bigNumber)
+        return ''.join(self.__bigNumber)
     def __del__(self):
         pass
     
