@@ -34,6 +34,9 @@ class BN:
         elif isinstance(num, int):
             # change to the string and add it to the list
             self.bigNumber = [number for number in str(num)]
+    
+    def __len__(self):
+        return len(self.bigNumber)
             
     def __add__(self, other):
         pass
