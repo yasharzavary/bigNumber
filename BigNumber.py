@@ -31,17 +31,20 @@ class BNError(Exception):
         return f"Error happend : {self.__message}..."
 
 class BN:
-    def __init__(self, num=0):
+    def __init__(self, num=0, s = None):
         """_summary_
             make one big number depend of the num's type...
         Args:
             num (, optional): value of the big number
+            s(bool,optional): sign of the number
         """
         # default it is True, in init we check it
-        self.__sign = None
+        self.__sign = s
         # our list of digits
         self.__bigNumber = []
-        
+        if isinstance(num, int):
+            # if it is int, it will change to the string
+            num = str(num)
         # fill the list depend on the type of the num
         if isinstance(num, str):
             # filter numbers that have problem
@@ -52,18 +55,16 @@ class BN:
             if num[0] == '-':
                 self.__sign = False
                 #  ignore sign of the number
-                self.bigNumber = [number for number in num[1:]]
+                self.__bigNumber = [number for number in num[1:]]
             elif num[0] == '+':
                 self.__sign = True
-                self.bigNumber = [number for number in num[1:]]
+                self.__bigNumber = [number for number in num[1:]]
             else:
                 # if big number it isn't non-type, it default make positive
                 self.__sign = True
-                self.bigNumber = [number for number in num]
+                self.__bigNumber = [number for number in num]
                 
-        elif isinstance(num, int):
-            # change to the string and add it to the list
-            self.bigNumber = [number for number in str(num)]
+
         elif isinstance(num, list):
             temp = [str(number) for number in num]
             if not search(r'^[+-]?\d+$', ''.join(temp)):
@@ -75,7 +76,7 @@ class BN:
         Returns:
             int: ...
         """
-        return len(self.bigNumber)
+        return len(self.__bigNumber)
     def insertNum(self, num, were):
         """_summary_
             this function will ad one number in specific part of the number list
@@ -83,16 +84,75 @@ class BN:
             num (optional): number that we want to add to the number list
             were (int): place that we want to add it to the list
         """
-        self.bigNumber.insert(num, were)
-         
+        self.__bigNumber.insert(were, num)
+    
+    def itemGetter(self, index):
+        return int(self.__bigNumber[index])    
+    
+    @property
+    def Nsign(self):
+        return self.__sign
+    
     def __add__(self, other):
-        pass
-        
+        """_summary_
+            this will sum two big number
+            
+        Args:
+            other (BN): number that we want to add to this number
+        """
+        # if two number have one similar sign, it will simply add them togheter and return
+        if self.Nsign == other.Nsign:
+            # one empty list for the new number
+            result = []
+            # our carry for the next step
+            carry = 0
+            
+            # i get len of the numbers for use it in the adding part
+            lself = len(self)
+            lother = len(other)
+            
+            # if len of them is similar, we have simple way...
+            # add them and send them with one of the signs
+            if lself == lother:
+                # i loop and sum one by one and add them to the result list
+                for i in range(-1, lself*-1 - 1, -1):
+                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    # carry update
+                    carry = temp // 10
+                    # adding to the result
+                    result.insert(0, temp%10)
+                # check for extra digit(if we have...)
+                if carry > 0:
+                    result.insert(0, carry)
+                
+            
+            elif lself > lother:
+                for i in range(-1, lother*-1 - 1, -1):
+                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    carry = temp // 10
+                    result.insert(0, temp%10)
+                for i in range(lother*-1 - 1, lself*-1 - 1,-1):
+                    if carry == 0:
+                        result.insert(0, self.itemGetter(i))
+                    temp = self.itemGetter(i) + carry
+                    carry = temp // 10
+                    result.insert(0, temp%10)
+            return BN(result, self.Nsign)
+            
+        elif self.Nsign == True:
+            return self - BN(other.__bigNumber)
+        else:
+            return other - BN(self.__bigNumber)        
         
             
              
         
     def __sub__(self, other):
+        """_summary_
+            this will subtract two big number
+        Args:
+            other (BN): big number that we want to use int he sub function
+        """
         pass
     def __mul__(self, other):
         pass

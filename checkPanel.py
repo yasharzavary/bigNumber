@@ -1,4 +1,4 @@
 from BigNumber import BN
 
-print(BN('+21654kh56545'))
+print(BN(989662) + BN(36598))
 
