@@ -30,10 +30,10 @@ class BN:
         # fill the list depend on the type of the num
         if isinstance(num, str):
             # adding to the list
-            bigNumber = [num for num in bigNumber]
+            self.bigNumber = [number for number in num]
         elif isinstance(num, int):
             # change to the string and add it to the list
-            bigNumber = [str(num) for num in bigNumber]
+            self.bigNumber = [number for number in str(num)]
             
     def __add__(self, other):
         pass
@@ -81,7 +81,10 @@ class BN:
     def __repr__(self):
         pass
     def __str__(self):
-        pass
+        """_summary_
+            str magic function of the class
+        """
+        return ''.join(self.bigNumber)
     def __del__(self):
         pass
     
