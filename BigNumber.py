@@ -1,9 +1,40 @@
+"""_summary_
+    big number class is maded for some very big numbers...
+    like one number with 100 digits...
+    
+    this class made with list base calculation...
+    it mean that all numbers add in one list amd do all functions on this list
+    (i add other type of this class in my github that maded with string base calculation)\
+    https://github.com/yasharzavary
+    
+    my linkedin:
+    https://www.linkedin.com/in/yasharzavary360/
+    
+    you can do all math functions with this function and you can use for your codes
+    it can be used in all fields like in astronomy, biotech and other fields
+    
+    writer:
+        yashar zavary rezaie(student of KHU, Tehran_Iran)
 
+"""
 
 class BN:
-    def __init__(self, ):
-        pass
-    
+    def __init__(self, num=0):
+        """_summary_
+            make one big number depend of the num's type...
+        Args:
+            num (, optional): value of the big number
+        """
+        # our list of digits
+        self.bigNumber = []
+        # fill the list depend on the type of the num
+        if isinstance(num, str):
+            # adding to the list
+            bigNumber = [num for num in bigNumber]
+        elif isinstance(num, int):
+            # change to the string and add it to the list
+            bigNumber = [str(num) for num in bigNumber]
+            
     def __add__(self, other):
         pass
     def __sub__(self, other):
