@@ -124,19 +124,43 @@ class BN:
                 # check for extra digit(if we have...)
                 if carry > 0:
                     result.insert(0, carry)
-                
-            
+                    
+            # if one of the numbers have longer len than other
             elif lself > lother:
+                # add two number's similar len part
                 for i in range(-1, lother*-1 - 1, -1):
+                    # make one temp and add two index
                     temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    # update carry
                     carry = temp // 10
                     result.insert(0, temp%10)
+                # add part that it isn't similar in these two big number
                 for i in range(lother*-1 - 1, lself*-1 - 1,-1):
+                    # if carry is zero, we just add numbers of the self to result
                     if carry == 0:
                         result.insert(0, self.itemGetter(i))
                     temp = self.itemGetter(i) + carry
                     carry = temp // 10
                     result.insert(0, temp%10)
+                # if we have one carry in last part, we must add it to the result
+                if carry > 0:
+                    result.insert(0, carry)
+            else:
+                # similar to the second condition, just we do it or other big number
+                for i in range(-1, lself*-1 - 1, -1):
+                    temp = self.itemGetter(i) + other.itemGetter(i) + carry
+                    carry = temp // 10
+                    result.insert(0, temp % 10)
+                for i in range(lself*-1 - 1, lother*-1 - 1, -1 ):
+                    if carry == 0:
+                        result.insert(0, other.itemGetter(i))
+                    temp = other.itemGetter(i) + carry
+                    carry = temp // 10 
+                    result.insert(0, temp % 10)
+                if carry > 0:
+                    result.insert(0, carry)
+                
+            # return new BN that is sum result
             return BN(result, self.Nsign)
             
         elif self.Nsign == True:
