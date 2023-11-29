@@ -197,7 +197,8 @@ class BN:
         """
         self.__sign = True
         return self
-                   
+    def __delitem__(self, index):
+        del self.__bigNumber[index]             
     def __sub__(self, other):
         if BN.isBN(other): other = BN(other)
         if self.__sign != other.Nsign:
@@ -257,10 +258,12 @@ class BN:
         pass
     def __pow__(self, other):
         pass
-    def __rshift__(self, other):
-        pass
-    def __lshift__(self, other):
-        pass
+    def __rshift__(self, time=1):
+        for i in range(time):
+            del self[-1]
+    def __lshift__(self, time=1):
+        for i in range(time):
+            self.__bigNumber.append('0')
     
     def __lt__(self, other):
         # if other not BN, it will change it
