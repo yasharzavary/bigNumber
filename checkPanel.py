@@ -17,3 +17,9 @@ print(-563 + 123456)
 x = BN(1234567895123145693215621556214856215)
 x+=1
 print(x)
+
+print(BN())
+
+for i in range(1000):
+    if BN(i) != i:
+        print(BN(i))

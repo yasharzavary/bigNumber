@@ -38,11 +38,12 @@ class BN:
         if isinstance(num, int):
             # if it is int, it will change to the string
             num = str(num)
-        # fill the list depend on the type of the num
-        if isinstance(num, str):
-  
             # change sign flag and adding to the list
             if num[0] == '-':
+                if not search(r'[^0]', num[1:]):
+                    self.__sign = True
+                    self.__bigNumber = ['0']
+                    return                     
                 # filter numbers that have problem
                 if not search(r'^[+-]?\d+$', num[1:]):
                     raise BNError('you can\'t use any characters in your number, just number please')
@@ -50,12 +51,21 @@ class BN:
                 #  ignore sign of the number
                 self.__bigNumber = [number for number in num[1:]]
             elif num[0] == '+':
+                # fill if number is zero
+                if not search(r'[^0]', num[1:]):
+                    self.__sign = True
+                    self.__bigNumber = ['0']
+                    return 
                 # filter numbers that have problem
                 if not search(r'^[+-]?\d+$', num[1:]):
                     raise BNError('you can\'t use any characters in your number, just number please')
                 self.__sign = True
                 self.__bigNumber = [number for number in num[1:]]
             else:
+                if not search(r'[^0]', num):
+                    self.__sign = True
+                    self.__bigNumber = ['0']
+                    return 
                 # filter numbers that have problem
                 if not search(r'^[+-]?\d+$', num):
                     raise BNError('you can\'t use any characters in your number, just number please')
@@ -103,9 +113,13 @@ class BN:
             list: return list of the numbers
         """
         return self.__bigNumber
+    @staticmethod
+    def isBN(x):
+        if not isinstance(x, BN):
+            return True
     def __add__(self, other):
-        if not isinstance(other, BN):
-            other = BN(other)
+        # if other not BN, it will convert it
+        if BN.isBN(other): other = BN(other)
         # if two number have one similar sign, it will simply add them togheter and return
         if self.__sign == other.Nsign:
             # one empty list for the new number
@@ -185,9 +199,7 @@ class BN:
         return self
                    
     def __sub__(self, other):
-        # if other it isn't BN class, we make it in BN class to sum
-        if not isinstance(other, BN):
-            other = BN(other)
+        if BN.isBN(other): other = BN(other)
         if self.__sign != other.Nsign:
             return self + BN(other.Ndigits, self.__sign)
         
@@ -251,6 +263,8 @@ class BN:
         pass
     
     def __lt__(self, other):
+        # if other not BN, it will change it
+        if BN.isBN(other): other = BN(other)
         # control sign of the numbers
         if self.Nsign==False and other.Nsign==True:
             return True 
@@ -281,6 +295,7 @@ class BN:
                     return True
             return False
     def __gt__(self, other):
+        if BN.isBN(other): other = BN(other)
         # control sign of the numbers
         if self.Nsign==False and other.Nsign==True:
             return False 
@@ -311,6 +326,7 @@ class BN:
                     return True
             return False
     def __le__(self, other):
+        if BN.isBN(other): other = BN(other)
         # control sign of the numbers
         if self.Nsign==False and other.Nsign==True:
             return True 
@@ -352,6 +368,7 @@ class BN:
                 return True
             return False
     def __ge__(self, other):
+        if BN.isBN(other): other = BN(other)
         # control sign of the numbers
         if self.Nsign==False and other.Nsign==True:
             return False 
@@ -393,6 +410,7 @@ class BN:
                 return True
             return False  
     def __eq__(self, other):
+        if BN.isBN(other): other = BN(other)
         # if len or sign is different, it  will return false
         if self.Nsign != other.Nsign or len(self)!=len(other):
             return False
@@ -403,6 +421,7 @@ class BN:
                 return False
         return True
     def __ne__(self, other):
+        if BN.isBN(other): other = BN(other)
         # if len or sign is different, it  will return false
         if self.Nsign != other.Nsign or len(self)!=len(other):
             return True
@@ -415,14 +434,11 @@ class BN:
     
     
     def __isub__(self, other):
-        if not isinstance(other, BN):
-            other = BN(other)
+        if BN.isBN(other): other = BN(other)
         temp = self - other
         return temp
     def __iadd__(self, other):
-        # if other it isn't BN, it will change it
-        if not isinstance(other, BN):
-            other = BN(other)
+        if BN.isBN(other): other = BN(other)
         # do the sum
         temp = self + other
         return temp
