@@ -40,19 +40,25 @@ class BN:
             num = str(num)
         # fill the list depend on the type of the num
         if isinstance(num, str):
-            # filter numbers that have problem
-            if not search(r'^[+-]?\d+$', num[1:]):
-                raise BNError('you can\'t use any characters in your number, just number please')
-   
+  
             # change sign flag and adding to the list
             if num[0] == '-':
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num[1:]):
+                    raise BNError('you can\'t use any characters in your number, just number please')
                 self.__sign = False
                 #  ignore sign of the number
                 self.__bigNumber = [number for number in num[1:]]
             elif num[0] == '+':
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num[1:]):
+                    raise BNError('you can\'t use any characters in your number, just number please')
                 self.__sign = True
                 self.__bigNumber = [number for number in num[1:]]
             else:
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num):
+                    raise BNError('you can\'t use any characters in your number, just number please')
                 # if big number it isn't non-type, it default make positive
                 self.__sign = True
                 self.__bigNumber = [number for number in num]
@@ -63,6 +69,9 @@ class BN:
             if not search(r'^[+-]?\d+$', ''.join(temp)):
                 raise BNError('you can\'t use any characters in your number, just number please')
             self.__bigNumber = temp
+            self.__sign = True
+        else:
+            raise BNError('you must use int type in big number, please correct it')
     def __len__(self):
         return len(self.__bigNumber)
     def insertNum(self, num, were):
@@ -95,7 +104,8 @@ class BN:
         """
         return self.__bigNumber
     def __add__(self, other):
-        
+        if not isinstance(other, BN):
+            other = BN(other)
         # if two number have one similar sign, it will simply add them togheter and return
         if self.__sign == other.Nsign:
             # one empty list for the new number
@@ -135,6 +145,7 @@ class BN:
                     # if carry is zero, we just add numbers of the self to result
                     if carry == 0:
                         result.insert(0, self[i])
+                        continue
                     temp = self[i] + carry
                     carry = temp // 10
                     result.insert(0, temp%10)
@@ -150,6 +161,7 @@ class BN:
                 for i in range(lself*-1 - 1, lother*-1 - 1, -1 ):
                     if carry == 0:
                         result.insert(0, other[i])
+                        continue
                     temp = other[i] + carry
                     carry = temp // 10 
                     result.insert(0, temp % 10)
@@ -173,6 +185,9 @@ class BN:
         return self
                    
     def __sub__(self, other):
+        # if other it isn't BN class, we make it in BN class to sum
+        if not isinstance(other, BN):
+            other = BN(other)
         if self.__sign != other.Nsign:
             return self + BN(other.Ndigits, self.__sign)
         
@@ -182,7 +197,7 @@ class BN:
         
         result = []
         
-        if lself > lother:
+        if self > other:
             BNTemp = self
             for i in range(-1, lother*-1 - 1, -1):
                 a = BNTemp[i]
@@ -196,9 +211,27 @@ class BN:
                 if BNTemp[i] < 0:
                     result.insert(0, BNTemp[i] + 10)
                 else:
-                    result.insert(0, BNTemp[i])           
+                    result.insert(0, BNTemp[i]) 
+            signTemp = self.__sign  
+        elif self == other:
+            return 0
         else:
-            pass
+            BNTemp = other
+            for i in range(-1, lself*-1 - 1, -1):
+                a = BNTemp[i]
+                b = self[i]
+                if a >= b:
+                    result.insert(0, a-b)
+                else:
+                    result.insert(0, a-b+10)
+                    BNTemp[i-1] = BNTemp[i-1] - 1
+            for i in range(lself*-1 - 1, lother*-1 - 1, -1):
+                if BNTemp[i] < 0:
+                    result.insert(0, BNTemp[i] + 10)
+                else:
+                    result.insert(0, BNTemp[i])  
+            signTemp = False if other.Nsign else True
+        return BN(result, signTemp)              
         
         
         
@@ -233,7 +266,7 @@ class BN:
                 return True
             # two number with same len and sign...ok control one by one
             for i in range(len(self)):
-                if self[i]<other[i]:
+                if self[i] < other[i]:
                     return True
             return False
         else:
@@ -382,9 +415,18 @@ class BN:
     
     
     def __isub__(self, other):
-        pass
+        if not isinstance(other, BN):
+            other = BN(other)
+        temp = self - other
+        return temp
     def __iadd__(self, other):
-        pass
+        # if other it isn't BN, it will change it
+        if not isinstance(other, BN):
+            other = BN(other)
+        # do the sum
+        temp = self + other
+        return temp
+    
     def __imul__(self, other):
         pass
     def __ipow__(self, other):
@@ -395,12 +437,16 @@ class BN:
         pass
     
     def __repr__(self):
-        pass
+        # control the sign and send the output
+        if self.__sign:   
+            return ''.join(self.__bigNumber)
+        else:
+            return '-' + ''.join(self.__bigNumber)
     def __str__(self):
-        """_summary_
-            str magic function of the class
-        """
-        return ''.join(self.__bigNumber)
+        if self.__sign:   
+            return ''.join(self.__bigNumber)
+        else:
+            return '-' + ''.join(self.__bigNumber)
     def __del__(self):
         pass
     
