@@ -40,35 +40,40 @@ class BN:
             num = str(num)
             # change sign flag and adding to the list
             if num[0] == '-':
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num[1:]):
+                    raise BNError('you can\'t use any characters in your number, just number please')
+                num = '-' + str(int(num[1:]))
                 if not search(r'[^0]', num[1:]):
                     self.__sign = True
                     self.__bigNumber = ['0']
                     return                     
-                # filter numbers that have problem
-                if not search(r'^[+-]?\d+$', num[1:]):
-                    raise BNError('you can\'t use any characters in your number, just number please')
+
                 self.__sign = False
                 #  ignore sign of the number
                 self.__bigNumber = [number for number in num[1:]]
             elif num[0] == '+':
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num[1:]):
+                    raise BNError('you can\'t use any characters in your number, just number please')
+                num = '+' + str(int(num[1:]))
                 # fill if number is zero
                 if not search(r'[^0]', num[1:]):
                     self.__sign = True
                     self.__bigNumber = ['0']
                     return 
-                # filter numbers that have problem
-                if not search(r'^[+-]?\d+$', num[1:]):
-                    raise BNError('you can\'t use any characters in your number, just number please')
                 self.__sign = True
                 self.__bigNumber = [number for number in num[1:]]
             else:
+                # filter numbers that have problem
+                if not search(r'^[+-]?\d+$', num):
+                    raise BNError('you can\'t use any characters in your number, just number please')
+                num = str(int(num))
                 if not search(r'[^0]', num):
                     self.__sign = True
                     self.__bigNumber = ['0']
                     return 
-                # filter numbers that have problem
-                if not search(r'^[+-]?\d+$', num):
-                    raise BNError('you can\'t use any characters in your number, just number please')
+
                 # if big number it isn't non-type, it default make positive
                 self.__sign = True
                 self.__bigNumber = [number for number in num]
@@ -78,6 +83,10 @@ class BN:
             temp = [str(number) for number in num]
             if not search(r'^[+-]?\d+$', ''.join(temp)):
                 raise BNError('you can\'t use any characters in your number, just number please')
+            if not search(r'[^0]', ''.join(temp)):
+                self.__sign = True
+                self.__bigNumber = ['0']
+                return
             self.__bigNumber = temp
             self.__sign = True
         else:
@@ -86,13 +95,18 @@ class BN:
         return len(self.__bigNumber)
     def insertNum(self, num, were):
         """_summary_
-            this function will ad one number in specific part of the number list
+            this function will add one number in specific part of the number list
         Args:
             num (optional): number that we want to add to the number list
             were (int): place that we want to add it to the list
         """
         self.__bigNumber.insert(were, num)  
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            temp = self.__bigNumber[index.start:index.stop:index.step]
+            if not temp:
+                return BN(0, True)
+            return BN(temp, self.__sign)
         return int(self.__bigNumber[index])  
     def __setitem__(self, index, val):
         self.__bigNumber[index] = val  
@@ -104,7 +118,13 @@ class BN:
         Returns:
             bool: one bool depend on the sign
         """
-        return self.__sign  
+        return self.__sign
+
+    @Nsign.setter
+    def Nsign(self, sign):
+        self.__sign = sign
+
+
     @property
     def Ndigits(self):
         """_summary_
@@ -189,6 +209,9 @@ class BN:
             return self - BN(other.Ndigits)
         else:
             return other - BN(self.Ndigits)        
+    def __radd__(self, other):
+        print(self)
+        return self + BN(other)
     def __abs__(self):
         """_summary_
             this will abs our big number and return it for other usage
@@ -245,11 +268,59 @@ class BN:
                     result.insert(0, BNTemp[i])  
             signTemp = False if other.Nsign else True
         return BN(result, signTemp)              
-        
+
+    def __rsub__(self, other):
+        return self - BN(other)
+    @property
+    def getNum(self):
+        temp = int(''.join(self.__bigNumber))   
+        if self.__sign == False:
+            temp *= -1
+        return temp
         
         
     def __mul__(self, other):
-        pass
+        # resultSign = False if self.Nsign != other.Nsign else True
+        # self.__sign = True
+        # other.Nsign = True
+        lself = len(self)
+        lother = len(other)
+        n = max(lself,  lother)
+        if self.getNum == 0 or other.getNum == 0:
+            return BN(0)
+        elif n < 4:
+            return BN(self.getNum * other.getNum)
+
+        m = n // 2
+
+        # x = self[]
+
+
+        if lself - m <= 0:
+            x = BN(0)
+            y = self
+        else:
+            x = self[:lself - m]
+            y = self[lself - m:]
+
+        if lother - m <= 0:
+            w = BN(0)
+            z = other
+        else:
+            w = other[:lother - m]
+            z = other[lother - m:]
+
+        r = (x+y)*(w+z)
+        p = x * w
+        q = y * z
+
+        pH = BN(p.getNum, p.Nsign)
+        result = (p<<(2*m)) + ((r - pH - q)<<m) + q
+
+        return  BN(result.getNum, self.__sign == other.Nsign)
+
+
+
     def __truediv__(self, other):
         pass
     def __floordiv__(self, other):
@@ -261,9 +332,11 @@ class BN:
     def __rshift__(self, time=1):
         for i in range(time):
             del self[-1]
+        return self
     def __lshift__(self, time=1):
         for i in range(time):
             self.__bigNumber.append('0')
+        return self
     
     def __lt__(self, other):
         # if other not BN, it will change it
