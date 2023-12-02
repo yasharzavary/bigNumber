@@ -49,9 +49,22 @@ from BigNumber import BN
 # print([2,3][0:-1])
 # print([1,2,3,4] - [1,2])
 # print(BN(-58))
-#
-print(BN(-1) * BN(99987654321))
+
+# BN(120)/0
+# print(BN(2535)**8000)
+# print(2535**800)
+# print(15486215489621456621895//1465652)
+
+# print(BN(-1) * BN(99987654321))
 # print(BN(0)<<4)
 # print(BN(1086)  - BN(87))
 # print(BN(00000) + BN(99900) + BN(87))
+# x = 100
+# for i in range(2, 1):
+#     x /= 2
+#     print(i)
+
+
+
+
 

@@ -18,8 +18,10 @@
 
 """
 
-import string
+import string, sys
 from re import search
+
+sys.set_int_max_str_digits(5000000)
 
 # exception class
 class BNError(Exception):
@@ -77,8 +79,6 @@ class BN:
                 # if big number it isn't non-type, it default make positive
                 self.__sign = True
                 self.__bigNumber = [number for number in num]
-                
-
         elif isinstance(num, list):
             temp = [str(number) for number in num]
             if not search(r'^[+-]?\d+$', ''.join(temp)):
@@ -109,8 +109,7 @@ class BN:
             return BN(temp, self.__sign)
         return int(self.__bigNumber[index])  
     def __setitem__(self, index, val):
-        self.__bigNumber[index] = val  
-           
+        self.__bigNumber[index] = val
     @property
     def Nsign(self):
         """_summary_
@@ -119,12 +118,9 @@ class BN:
             bool: one bool depend on the sign
         """
         return self.__sign
-
     @Nsign.setter
     def Nsign(self, sign):
         self.__sign = sign
-
-
     @property
     def Ndigits(self):
         """_summary_
@@ -137,6 +133,12 @@ class BN:
     def isBN(x):
         if not isinstance(x, BN):
             return True
+    @property
+    def getNum(self):
+        temp = int(''.join(self.__bigNumber))
+        if self.__sign == False:
+            temp *= -1
+        return temp
     def __add__(self, other):
         # if other not BN, it will convert it
         if BN.isBN(other): other = BN(other)
@@ -269,20 +271,12 @@ class BN:
                 else:
                     result.insert(0, BNTemp[i])  
             signTemp = False if other.Nsign else True
-        return BN(result, signTemp)              
-
+        return BN(result, signTemp)
     def __rsub__(self, other):
         return self - BN(other)
-    @property
-    def getNum(self):
-        temp = int(''.join(self.__bigNumber))   
-        if self.__sign == False:
-            temp *= -1
-        return temp
-        
-        
     def __mul__(self, other):
         resultSign = False if self.Nsign != other.Nsign else True
+        if BN.isBN(other):other=BN(other)
         self.__sign = True
         other.Nsign = True
         lself = len(self)
@@ -318,15 +312,19 @@ class BN:
         result = (p<<(2*m)) + ((r - pH - q)<<m) + q
 
         return  BN(result.getNum, resultSign)
-
-
-
     def __truediv__(self, other):
         pass
     def __mod__(self, other):
         pass
+
     def __pow__(self, other):
-        pass
+        result = 1
+        while other > 0:
+            if other % 2 == 1:
+                result *= self.getNum
+            self *= self
+            other //= 2
+        return  result
     def __rshift__(self, time=1):
         for i in range(time):
             del self[-1]
@@ -335,7 +333,6 @@ class BN:
         for i in range(time):
             self.__bigNumber.append('0')
         return self
-    
     def __lt__(self, other):
         # if other not BN, it will change it
         if BN.isBN(other): other = BN(other)
@@ -505,8 +502,6 @@ class BN:
             if self[i]!=other[i]:
                 return True
         return False
-    
-    
     def __isub__(self, other):
         if BN.isBN(other): other = BN(other)
         temp = self - other
@@ -516,18 +511,18 @@ class BN:
         # do the sum
         temp = self + other
         return temp
-    
     def __imul__(self, other):
         if BN.isBN(other): other = BN(other)
         temp = self * other
         return temp
     def __ipow__(self, other):
-        pass
+        if isinstance(other, BN): other = other.getNum
+        temp = self ** other
+        return  self
     def __idiv__(self, other):
         if BN.isBN(other): other=BN(other)
         temp = self / other
         return temp
-
     def __repr__(self):
         # control the sign and send the output
         if self.__sign:   

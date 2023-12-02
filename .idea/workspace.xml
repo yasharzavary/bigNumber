@@ -82,8 +82,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/checkPanel.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="35" />
+          <line>53</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
