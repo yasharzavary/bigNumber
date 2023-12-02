@@ -245,6 +245,7 @@ class BN:
                     BNTemp[i-1] = BNTemp[i-1] - 1
             for i in range(lother*-1 - 1, lself*-1 - 1, -1):
                 if BNTemp[i] < 0:
+                    BNTemp[i-1] -= 1
                     result.insert(0, BNTemp[i] + 10)
                 else:
                     result.insert(0, BNTemp[i]) 
@@ -263,6 +264,7 @@ class BN:
                     BNTemp[i-1] = BNTemp[i-1] - 1
             for i in range(lself*-1 - 1, lother*-1 - 1, -1):
                 if BNTemp[i] < 0:
+                    BNTemp[i-1]-=1
                     result.insert(0, BNTemp[i] + 10)
                 else:
                     result.insert(0, BNTemp[i])  
@@ -280,35 +282,33 @@ class BN:
         
         
     def __mul__(self, other):
-        # resultSign = False if self.Nsign != other.Nsign else True
-        # self.__sign = True
-        # other.Nsign = True
+        resultSign = False if self.Nsign != other.Nsign else True
+        self.__sign = True
+        other.Nsign = True
         lself = len(self)
         lother = len(other)
         n = max(lself,  lother)
         if self.getNum == 0 or other.getNum == 0:
             return BN(0)
-        elif n < 4:
+        elif n <= 4:
             return BN(self.getNum * other.getNum)
 
         m = n // 2
-
-        # x = self[]
-
-
-        if lself - m <= 0:
+        if lself <= m:
             x = BN(0)
             y = self
         else:
             x = self[:lself - m]
             y = self[lself - m:]
 
-        if lother - m <= 0:
+        if lother <= m:
             w = BN(0)
             z = other
         else:
             w = other[:lother - m]
             z = other[lother - m:]
+
+        # r1 = x+y
 
         r = (x+y)*(w+z)
         p = x * w
@@ -317,13 +317,11 @@ class BN:
         pH = BN(p.getNum, p.Nsign)
         result = (p<<(2*m)) + ((r - pH - q)<<m) + q
 
-        return  BN(result.getNum, self.__sign == other.Nsign)
+        return  BN(result.getNum, resultSign)
 
 
 
     def __truediv__(self, other):
-        pass
-    def __floordiv__(self, other):
         pass
     def __mod__(self, other):
         pass
@@ -520,14 +518,16 @@ class BN:
         return temp
     
     def __imul__(self, other):
-        pass
+        if BN.isBN(other): other = BN(other)
+        temp = self * other
+        return temp
     def __ipow__(self, other):
         pass
     def __idiv__(self, other):
-        pass
-    def __ifloordiv__(self, other):
-        pass
-    
+        if BN.isBN(other): other=BN(other)
+        temp = self / other
+        return temp
+
     def __repr__(self):
         # control the sign and send the output
         if self.__sign:   

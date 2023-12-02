@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59111eac-3eef-48da-bea7-d9f53ad5d917" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BigNumber.py" beforeDir="false" afterPath="$PROJECT_DIR$/BigNumber.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checkPanel.py" beforeDir="false" afterPath="$PROJECT_DIR$/checkPanel.py" afterDir="false" />
     </list>
@@ -82,7 +83,7 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/checkPanel.py</url>
           <line>52</line>
-          <option name="timeStamp" value="26" />
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
