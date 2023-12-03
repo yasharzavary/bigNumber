@@ -141,6 +141,11 @@ class BN:
             temp *= -1
         return temp
     def __add__(self, other):
+        """_summary_
+            add function: i write one carry and use it to do sum like on the paper...
+            i control len of the self and other and write some section in this part
+            if the sign is non-similart, i send it to the sub function to calculate.
+        """
         # if other not BN, it will convert it
         if BN.isBN(other): other = BN(other)
         # if two number have one similar sign, it will simply add them togheter and return
@@ -224,9 +229,12 @@ class BN:
         self.__sign = True
         return self
     def __delitem__(self, index):
+        # it will delete one index of the list of the big number
         del self.__bigNumber[index]             
     def __sub__(self, other):
+        # if it isn't BN type, it will change it
         if BN.isBN(other): other = BN(other)
+        # if sign's different, send to the sum
         if self.__sign != other.Nsign:
             return self + BN(other.Ndigits, self.__sign)
         
