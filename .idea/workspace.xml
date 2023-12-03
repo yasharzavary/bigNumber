@@ -29,7 +29,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/Windows/Desktop/n.h/IBGR-Group-Recommendation-Model"
+    "last_opened_file_path": "D:/python/project/bigNumber"
   }
 }]]></component>
   <component name="RunManager">
@@ -82,8 +82,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/checkPanel.py</url>
-          <line>53</line>
-          <option name="timeStamp" value="37" />
+          <line>52</line>
+          <option name="timeStamp" value="40" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

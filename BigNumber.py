@@ -313,9 +313,18 @@ class BN:
 
         return  BN(result.getNum, resultSign)
     def __truediv__(self, other):
-        pass
-    def __mod__(self, other):
-        pass
+        if BN.isBN(other):other = BN(other)
+        if other.getNum == 0:
+            raise ZeroDivisionError('divide bu zero is unsupported')
+        n = len(self)
+        if n <= 4:
+            return self.getNum // other.getNum
+
+        m = n // 2
+        x = self[:n - m]
+        y = self[n - m:]
+
+        return (x/other)<<(m) + (y/other)
 
     def __pow__(self, other):
         result = 1

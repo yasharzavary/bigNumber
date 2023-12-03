@@ -49,7 +49,8 @@ from BigNumber import BN
 # print([2,3][0:-1])
 # print([1,2,3,4] - [1,2])
 # print(BN(-58))
-
+# print(BN(125)/5)
+print(BN(50000)/50)
 # BN(120)/0
 # print(BN(2535)**8000)
 # print(2535**800)
