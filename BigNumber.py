@@ -80,6 +80,7 @@ class BN:
                 self.__sign = True
                 self.__bigNumber = [number for number in num]
         elif isinstance(num, list):
+            num = [x for x in str(int(''.join([str(x) for x in num])))]
             temp = [str(number) for number in num]
             if not search(r'^[+-]?\d+$', ''.join(temp)):
                 raise BNError('you can\'t use any characters in your number, just number please')
@@ -275,8 +276,8 @@ class BN:
     def __rsub__(self, other):
         return self - BN(other)
     def __mul__(self, other):
-        resultSign = False if self.Nsign != other.Nsign else True
         if BN.isBN(other):other=BN(other)
+        resultSign = False if self.Nsign != other.Nsign else True
         self.__sign = True
         other.Nsign = True
         lself = len(self)
@@ -313,18 +314,34 @@ class BN:
 
         return  BN(result.getNum, resultSign)
     def __truediv__(self, other):
-        if BN.isBN(other):other = BN(other)
+        if BN.isBN(other): other = BN(other)
         if other.getNum == 0:
             raise ZeroDivisionError('divide bu zero is unsupported')
-        n = len(self)
-        if n <= 4:
-            return self.getNum // other.getNum
 
-        m = n // 2
-        x = self[:n - m]
-        y = self[n - m:]
+        result = []
+        rem = BN(0)
+        for i in range(len(self)):
+            divideTemp = rem * 10 + self[i]
+            rem = divideTemp % other
+            result.append(divideTemp.getNum // (other.getNum))
+        return BN(result)
 
-        return (x/other)<<(m) + (y/other)
+    def __mod__(self, other):
+        if BN.isBN(other):other = BN(other)
+        rem = 0
+        for i in range(len(self)):
+            modeTemp = rem * 10 + self[i]
+            rem = modeTemp % other.getNum
+        return  BN(rem)
+
+    def __rmod__(self, other):
+        if BN.isBN(other):other = BN(other)
+        rem = 0
+        for i in range(len(self)):
+            modeTemp = rem * 10 + self[i]
+            rem = modeTemp % other.getNum
+        return BN(rem)
+
 
     def __pow__(self, other):
         result = 1
